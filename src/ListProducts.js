@@ -1,4 +1,4 @@
-// import { products } from "./data/product";
+import { products } from "./data/product";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -6,6 +6,12 @@ import axios from "axios";
 
 const ListProducts = () => {
   const [listproduct, SetListProduct] = useState([]);
+
+  //SetListProduct(products);
+
+  //listproduct = products;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const LayDulieutuBackend = async () => {
@@ -44,6 +50,7 @@ const ListProducts = () => {
       >
         {listproduct.map((motsp) => (
           <div
+            onClick={() => navigate(`/sanpham/${motsp.id}`)}
             key={motsp.id}
             style={{
               height: "300px",
