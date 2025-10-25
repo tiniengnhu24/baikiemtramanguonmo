@@ -19,9 +19,6 @@ const Layout = () => {
                 <li>
                   <a href="/trang2">SINH VIÊN</a>
                 </li>
-                <li>
-                  <a href="/ListSanPham">SẢN PHẨM</a>
-                </li>
               </ul>
             </div>
             <div id="logo" class="logo1">
@@ -32,7 +29,7 @@ const Layout = () => {
             </div>
           </div>
           <div id="divmenu" class="menu">
-            BỎ TRỐNG
+            333
           </div>
         </div>
       </header>
