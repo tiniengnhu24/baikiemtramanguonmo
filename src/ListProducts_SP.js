@@ -24,15 +24,14 @@ const ListProducts_SP = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", width: "1000px" }}>
       <h2>Danh sách sản phẩm</h2>
 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)", // chia 4 cột cố định
-          gap: "25px",
-          justifyItems: "center", // căn giữa card
+          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+          gap: "20px",
         }}
       >
         {listProduct.map((p) => (
@@ -66,7 +65,7 @@ const ListProducts_SP = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 overflow: "hidden",
-                borderRadius: "5px",
+                borderRadius: "5%",
                 backgroundColor: "#f9f9f9",
               }}
             >
