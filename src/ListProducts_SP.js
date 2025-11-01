@@ -30,8 +30,9 @@ const ListProducts_SP = () => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-          gap: "20px",
+          gridTemplateColumns: "repeat(4, 1fr)", // chia 4 cột cố định
+          gap: "25px",
+          justifyItems: "center", // căn giữa card
         }}
       >
         {listProduct.map((p) => (
