@@ -65,7 +65,7 @@ const ListProducts_SP = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 overflow: "hidden",
-                borderRadius: "8px",
+                borderRadius: "5px",
                 backgroundColor: "#f9f9f9",
               }}
             >
