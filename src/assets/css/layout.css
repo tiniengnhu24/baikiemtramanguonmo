@@ -27,6 +27,11 @@ body {
 .menubar {
   background-color: #b22d30;
   height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  box-sizing: border-box;
 }
 
 #menutrai {
@@ -63,4 +68,65 @@ a.menutrai:hover {
 a.menutrai:active {
   color: #190c3f;
   font-family: "Times New Roman", Times, serif;
+}
+
+/***********************Phần Thông tin Login trên công cụ*************/
+
+/* --- Menu bên trái --- */
+.menubar-left {
+  display: flex;
+  gap: 20px;
+}
+
+.menu-item {
+  color: #fff;
+  text-decoration: none;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.menu-item:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+/* --- Phần bên phải (tên người dùng + đăng xuất) --- */
+.menubar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.username {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.logout-btn {
+  background-color: #fff;
+  color: #b22d30;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.25s;
+}
+
+.logout-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.login-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link:hover {
+  text-decoration: underline;
 }
