@@ -24,7 +24,7 @@ const ListProducts_SP = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px", width: "1000px" }}>
+    <div style={{ padding: "20px" }}>
       <h2>Danh sách sản phẩm</h2>
 
       <div
