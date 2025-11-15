@@ -43,7 +43,7 @@ const Layout = () => {
                   </li>
                   <li>
                     <a className="menutrai" href="/admin/products">
-                      QUAN TRI
+                      QUAN TRI CNN
                     </a>
                   </li>
                 </ul>
