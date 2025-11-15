@@ -1,5 +1,5 @@
 import "./assets/css/layout.css";
-import logo from "./assets/images/Ten-truong-do-1000x159.png";
+import logo from "./assets/images/ti.png";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -38,12 +38,12 @@ const Layout = () => {
                   </li>
                   <li>
                     <a className="menutrai" href="/trang1">
-                      EGOV
+                      DETAIL
                     </a>
                   </li>
                   <li>
                     <a className="menutrai" href="/admin/products">
-                      QUAN TRI CNN
+                      ADMIN
                     </a>
                   </li>
                 </ul>
@@ -74,7 +74,7 @@ const Layout = () => {
             <div className="menubar-right">
               {user ? (
                 <>
-                  <span className="username">👤 {user.username}</span>
+                  <span className="username"> {user.username}</span>
                   <button className="logout-btn" onClick={handleLogout}>
                     Đăng xuất
                   </button>

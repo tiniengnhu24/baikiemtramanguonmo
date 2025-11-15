@@ -25,7 +25,7 @@ body {
 }
 
 .menubar {
-  background-color: #b22d30;
+  background-color: #636e6b;
   height: 52px;
   display: flex;
   align-items: center;
@@ -51,7 +51,7 @@ body {
 
 a.menutrai:link,
 a.menutrai:visited {
-  color: #b22d30;
+  color: #0a4872;
   font-family: "Times New Roman", Times, serif;
   text-decoration: none;
 }

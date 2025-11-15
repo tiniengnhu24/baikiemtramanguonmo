@@ -1,10 +1,13 @@
-// Sửa ngày 4/11/2025 vì thêm trang quản trị sản phẩm dành cho Admin (CRUD Supabase + UI Grid)
 import React, { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
+
+const BUCKET = "product-images";
 
 const ListProducts_SP_Admin = () => {
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+
   const [newProduct, setNewProduct] = useState({
     title: "",
     price: "",
@@ -13,12 +16,13 @@ const ListProducts_SP_Admin = () => {
     rating_count: "",
   });
 
-  // 🔹 Lấy danh sách sản phẩm
+  // Lấy danh sách sản phẩm
   const fetchProducts = async () => {
     const { data, error } = await supabase
       .from("product1")
       .select("*")
       .order("id", { ascending: true });
+
     if (error) console.error("Lỗi khi tải sản phẩm:", error.message);
     else setProducts(data);
   };
@@ -27,7 +31,26 @@ const ListProducts_SP_Admin = () => {
     fetchProducts();
   }, []);
 
-  // 🔹 Xử lý nhập liệu form
+  // Upload ảnh lên Supabase, trả về public URL
+  const uploadImage = async () => {
+    if (!imageFile) return null;
+
+    const fileName = `product_${Date.now()}_${imageFile.name}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(BUCKET)
+      .upload(fileName, imageFile, { upsert: true });
+
+    if (uploadError) {
+      alert("❌ Lỗi upload ảnh: " + uploadError.message);
+      return null;
+    }
+
+    const { data } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+    return data.publicUrl;
+  };
+
+  // Xử lý input
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (editingProduct) {
@@ -37,10 +60,16 @@ const ListProducts_SP_Admin = () => {
     }
   };
 
-  // 🔹 Thêm sản phẩm mới
+  // Thêm sản phẩm mới
   const handleAdd = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.from("product1").insert([newProduct]);
+    let imageUrl = await uploadImage();
+    if (!imageUrl) imageUrl = "";
+
+    const { error } = await supabase
+      .from("product1")
+      .insert([{ ...newProduct, image: imageUrl }]);
+
     if (error) alert("❌ Lỗi khi thêm sản phẩm: " + error.message);
     else {
       alert("✅ Thêm sản phẩm thành công!");
@@ -51,27 +80,38 @@ const ListProducts_SP_Admin = () => {
         rating_rate: "",
         rating_count: "",
       });
+      setImageFile(null);
       fetchProducts();
     }
   };
 
-  // 🔹 Cập nhật sản phẩm
+  // Cập nhật sản phẩm
   const handleEdit = async (e) => {
     e.preventDefault();
+    let imageUrl = editingProduct.image;
+
+    if (imageFile) {
+      const uploaded = await uploadImage();
+      if (uploaded) imageUrl = uploaded;
+    }
+
     const { id, ...updated } = editingProduct;
+
     const { error } = await supabase
       .from("product1")
-      .update(updated)
+      .update({ ...updated, image: imageUrl })
       .eq("id", id);
+
     if (error) alert("❌ Lỗi khi cập nhật sản phẩm: " + error.message);
     else {
       alert("✅ Cập nhật sản phẩm thành công!");
       setEditingProduct(null);
+      setImageFile(null);
       fetchProducts();
     }
   };
 
-  // 🔹 Xóa sản phẩm
+  // Xóa sản phẩm
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc muốn xóa sản phẩm này không?")) {
       const { error } = await supabase.from("product1").delete().eq("id", id);
@@ -89,7 +129,7 @@ const ListProducts_SP_Admin = () => {
         🛠️ Quản lý sản phẩm (Admin)
       </h2>
 
-      {/* Form thêm/sửa sản phẩm */}
+      {/* Form thêm/sửa */}
       <form
         onSubmit={editingProduct ? handleEdit : handleAdd}
         className="bg-white shadow-md rounded-lg p-6 mb-10 max-w-2xl mx-auto"
@@ -117,17 +157,16 @@ const ListProducts_SP_Admin = () => {
             required
           />
           <input
-            name="image"
-            placeholder="URL hình ảnh"
-            value={editingProduct ? editingProduct.image : newProduct.image}
-            onChange={handleChange}
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImageFile(e.target.files[0])}
             className="border rounded-md p-2 col-span-2"
           />
           <input
             name="rating_rate"
             type="number"
             step="0.1"
-            placeholder="Đánh giá (0–5)"
+            placeholder="Đánh giá 0–5"
             value={
               editingProduct
                 ? editingProduct.rating_rate
@@ -139,7 +178,7 @@ const ListProducts_SP_Admin = () => {
           <input
             name="rating_count"
             type="number"
-            placeholder="Số lượt đánh giá"
+            placeholder="Lượt đánh giá"
             value={
               editingProduct
                 ? editingProduct.rating_count
@@ -155,53 +194,51 @@ const ListProducts_SP_Admin = () => {
             <button
               type="button"
               onClick={() => setEditingProduct(null)}
-              className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500"
+              className="bg-gray-400 text-white px-4 py-2 rounded-md"
             >
               Hủy
             </button>
           )}
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md"
           >
             {editingProduct ? "Lưu thay đổi" : "Thêm sản phẩm"}
           </button>
         </div>
       </form>
 
-      {/* Danh sách sản phẩm dạng Grid */}
+      {/* Grid sản phẩm */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((p) => (
           <div
             key={p.id}
-            className="bg-white shadow-sm rounded-xl p-4 border hover:shadow-lg transition transform hover:-translate-y-1"
+            className="bg-white shadow-sm rounded-xl p-4 border hover:shadow-lg flex flex-col items-center"
           >
-            <div className="flex items-center justify-center mb-3">
-              <img
-                src={p.image}
-                alt={p.title}
-                width="80"
-                className="w-20 h-20 object-cover rounded-md border"
-              />
-            </div>
-            <h4 className="font-semibold text-md mb-1 text-gray-800 truncate">
+            {/* Ảnh nhỏ kiểu thumbnail */}
+            <img
+              src={p.image || "https://via.placeholder.com/50"}
+              alt={p.title}
+              className="w-12 h-12 object-cover rounded-md mb-2"
+            />
+            <h4 className="font-semibold truncate text-center w-full text-sm">
               {p.title}
             </h4>
-            <p className="text-red-500 font-bold mb-1">${p.price}</p>
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="text-red-500 font-bold text-sm">${p.price}</p>
+            <p className="text-xs text-gray-600">
               ⭐ {p.rating_rate} ({p.rating_count})
             </p>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between mt-2 w-full gap-1">
               <button
                 onClick={() => setEditingProduct(p)}
-                className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 text-sm"
+                className="bg-yellow-500 text-white px-2 py-1 rounded-md text-xs flex-1"
               >
                 Sửa
               </button>
               <button
                 onClick={() => handleDelete(p.id)}
-                className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm"
+                className="bg-red-500 text-white px-2 py-1 rounded-md text-xs flex-1"
               >
                 Xóa
               </button>
